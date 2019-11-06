@@ -55,9 +55,7 @@ def main():
 
     if userArgs().userServer and not userArgs().userRepo:
         listRepos(userArgs().userServer)
-        print("run1")
     elif not userArgs().userRepo:
-        print("run")
         listRepos(url)
 
     if userArgs().userRepo and userArgs().userServer:
