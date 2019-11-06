@@ -2,7 +2,7 @@
 import json
 import sys
 import requests
-import yaml
+import os
 from optparse import OptionParser
 
 def listRepos(url):
@@ -44,19 +44,25 @@ def userArgs():
 
 def main():
 
-    ## Load environment from config file
-    with open("config.yml", 'r') as configfile:
-        cfg = yaml.load(configfile)
+    # Registry URL
+    url = os.getenv("DOCKER_REGISTRY")
 
-    ## Registry URL
-    url = cfg['registry']
+    # Sanity check
+    if not userArgs().userServer and not url:
+        print("Missing server URL")
+        print("Set DOCKER_REGISTRY or use '-s'")
+        exit(1)
 
     if userArgs().userServer and not userArgs().userRepo:
         listRepos(userArgs().userServer)
+        print("run1")
     elif not userArgs().userRepo:
+        print("run")
         listRepos(url)
 
-    if userArgs().userRepo:
+    if userArgs().userRepo and userArgs().userServer:
+        listTags(userArgs().userServer, userArgs().userRepo)
+    elif userArgs().userRepo and not userArgs().userServer:
         listTags(url, userArgs().userRepo)
 
 if __name__ == "__main__":
